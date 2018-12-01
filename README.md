@@ -7,3 +7,8 @@ ex)
 ![](./picture/document/TeikyomeAIKATSU.jpg)
 
 This repository generate this "提供目".
+
+## Used
+- Azure 
+    - FaceAPI
+- Golang
