@@ -12,3 +12,5 @@ This repository generate this "提供目".
 - Azure 
     - FaceAPI
 - Golang
+    - godotenv
+    - gin
