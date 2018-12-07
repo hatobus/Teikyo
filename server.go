@@ -1,20 +1,29 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
+	"image"
+	"io"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
+	"github.com/hatobus/Teikyo/callapi"
 	"github.com/hatobus/Teikyo/util"
 )
 
 func main() {
 	r := gin.Default()
 
-	util.Loadenv()
+	err := util.Loadenv()
+	if err != nil {
+		panic(err)
+	}
 
 	r.POST("/detect", createTeikyohandler)
 
@@ -26,18 +35,44 @@ func createTeikyohandler(c *gin.Context) {
 	form, _ := c.MultipartForm()
 	files := form.File["upload[]"]
 
-	exe, _ := os.Getwd()
-	fmt.Println(filepath.Join(filepath.Dir(exe), "picture", "output"))
+	errch := make(map[string]string, len(form.File))
+	b := new(bytes.Buffer)
 
 	for _, file := range files {
 		log.Println(file.Filename)
-		err := c.SaveUploadedFile(file, filepath.Join(filepath.Dir(exe), "Teikyo", "picture", "output", file.Filename))
+
+		f, err := file.Open()
+		defer f.Close()
+
+		// 一回DecodeConfigでファイルをいじるとファイルが壊れるために
+		// 別のbufにコピーをして回避しておく
+		io.Copy(b, f)
+
+		_, format, err := image.DecodeConfig(b)
 		if err != nil {
-			log.Println(err)
+			errch[file.Filename] = err.Error()
+			b.Reset()
+			break
+		} else if format != "jpeg" {
+			errch[file.Filename] = "Filetype must be jpeg"
+			b.Reset()
+			break
 		}
+
+		b.Reset()
+
+		landmark, err := callapi.DetectFace(f)
+		if err != nil {
+			errch[file.Filename] = err.Error()
+			break
+		}
+
+		spew.Dump(landmark)
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "craeted",
+		"errors":  errch,
 	})
 }
