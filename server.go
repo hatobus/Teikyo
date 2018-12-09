@@ -11,7 +11,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/hatobus/Teikyo/callapi"
 	img "github.com/hatobus/Teikyo/imgprocessing"
@@ -68,7 +67,9 @@ func createTeikyohandler(c *gin.Context) {
 			break
 		}
 
-		spew.Dump(landmark)
+		if len(landmark) == 0 {
+			errch[file.Filename] = "Human not found."
+		}
 
 		mul := false
 
