@@ -119,3 +119,21 @@ type FaceParts struct {
 		} `json:"underLipBottom"`
 	} `json:"faceLandmarks"`
 }
+
+func (fp FaceParts) ToLandmark() *Landmark {
+	LM := &Landmark{}
+
+	LM.EyeRight.TopX = fp.FaceLandmarks.EyeRightTop.X
+	LM.EyeRight.TopY = fp.FaceLandmarks.EyeRightTop.Y
+
+	LM.EyeRight.BottomX = fp.FaceLandmarks.EyeRightBottom.X
+	LM.EyeRight.BottomY = fp.FaceLandmarks.EyeRightBottom.Y
+
+	LM.EyeLeft.TopX = fp.FaceLandmarks.EyeLeftTop.X
+	LM.EyeLeft.TopY = fp.FaceLandmarks.EyeLeftTop.Y
+
+	LM.EyeLeft.BottomX = fp.FaceLandmarks.EyeLeftBottom.X
+	LM.EyeLeft.BottomY = fp.FaceLandmarks.EyeLeftBottom.Y
+
+	return LM
+}

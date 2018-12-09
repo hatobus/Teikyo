@@ -16,7 +16,7 @@ import (
 	"github.com/hatobus/Teikyo/models"
 )
 
-func DetectFace(fstream multipart.File) (*models.FaceParts, error) {
+func DetectFace(fstream multipart.File) ([]models.FaceParts, error) {
 
 	exe, _ := os.Getwd()
 	savedir := filepath.Join(exe, "picture", "output")
@@ -54,8 +54,9 @@ func DetectFace(fstream multipart.File) (*models.FaceParts, error) {
 	}
 
 	// URLの生成
-	u.Path = path.Join(u.Path, "?", query.Encode())
-	log.Println(u.Path)
+	u.Path = path.Join(u.Path, "detect")
+	u.RawQuery = query.Encode()
+	log.Println(u.String())
 
 	req, err := http.NewRequest("POST", u.String(), bytes.NewBuffer(imgBin))
 	if err != nil {
@@ -78,8 +79,8 @@ func DetectFace(fstream multipart.File) (*models.FaceParts, error) {
 		return nil, err
 	}
 
-	facelandmark := &models.FaceParts{}
-	err = json.Unmarshal(body, facelandmark)
+	var facelandmark []models.FaceParts
+	err = json.Unmarshal(body, &facelandmark)
 	if err != nil {
 		return nil, err
 	}
@@ -95,8 +96,7 @@ func jpegToBin(fstream multipart.File) ([]byte, error) {
 
 	img, err := jpeg.Decode(fstream)
 	if err != nil {
-		log.Println("line96: ", err)
-		// ここで unexpected EOF
+		// シークしないとunexpected EOFで落ちる
 		return buf.Bytes(), err
 	}
 
