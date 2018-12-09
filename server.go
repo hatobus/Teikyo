@@ -38,11 +38,13 @@ func createTeikyohandler(c *gin.Context) {
 	errch := make(map[string]string, len(form.File))
 	b := new(bytes.Buffer)
 
-	for _, file := range files {
+	var mul bool
+
+	for i, file := range files {
 		log.Println(file.Filename)
 
 		f, err := file.Open()
-		defer f.Close()
+		// defer f.Close()
 
 		// 一回DecodeConfigでファイルをいじるとファイルが壊れるために
 		// 別のbufにコピーをして回避しておく
@@ -52,10 +54,12 @@ func createTeikyohandler(c *gin.Context) {
 		if err != nil {
 			errch[file.Filename] = err.Error()
 			b.Reset()
+			f.Close()
 			break
 		} else if format != "jpeg" {
 			errch[file.Filename] = "Filetype must be jpeg"
 			b.Reset()
+			f.Close()
 			break
 		}
 
@@ -64,6 +68,7 @@ func createTeikyohandler(c *gin.Context) {
 		landmark, err := callapi.DetectFace(f)
 		if err != nil {
 			errch[file.Filename] = err.Error()
+			f.Close()
 			break
 		}
 
@@ -71,25 +76,24 @@ func createTeikyohandler(c *gin.Context) {
 			errch[file.Filename] = "Human not found."
 		}
 
-		mul := false
+		mul = false
 
 		if len(landmark) > 1 {
 			mul = true
 		}
 
 		for _, L := range landmark {
-
 			LM := L.ToLandmark()
-			err := img.GenTeikyo(f, LM, mul)
+			err := img.GenTeikyo(f, LM, mul, i)
 			if err != nil {
 				errch[file.Filename] = err.Error()
 			}
-
 		}
+
+		f.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "craeted",
-		"errors":  errch,
+		"errors": errch,
 	})
 }

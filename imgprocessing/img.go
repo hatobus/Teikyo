@@ -4,24 +4,23 @@ import (
 	"image"
 	"image/draw"
 	"image/png"
-	"log"
 	"math"
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/hatobus/Teikyo/models"
 	"github.com/nfnt/resize"
 )
 
-func GenTeikyo(fstream multipart.File, parts *models.Landmark, multi bool) error {
+func GenTeikyo(fstream multipart.File, parts *models.Landmark, multi bool, n int) error {
 
 	goPath := os.Getenv("GOPATH")
 	imgPath := filepath.Join(goPath, "src", "github.com", "hatobus", "Teikyo", "picture", "material")
-	outputfile := filepath.Join(goPath, "src", "github.com", "hatobus", "Teikyo", "picture", "output", "output.png")
+	outputfile := filepath.Join(goPath, "src", "github.com", "hatobus", "Teikyo", "picture", "output", "output"+strconv.Itoa(n)+".png")
 
 	t, _ := os.Open(filepath.Join(imgPath, "teikyo-tei.png"))
-	log.Println(filepath.Join(imgPath, "teikyo-tei.png"))
 	defer t.Close()
 
 	k, _ := os.Open(filepath.Join(imgPath, "teikyo-kyo.png"))
