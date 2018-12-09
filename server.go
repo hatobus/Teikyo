@@ -11,6 +11,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/hatobus/Teikyo/callapi"
 	img "github.com/hatobus/Teikyo/imgprocessing"
@@ -67,12 +68,18 @@ func createTeikyohandler(c *gin.Context) {
 			break
 		}
 
-		// spew.Dump(landmark)
+		spew.Dump(landmark)
+
+		mul := false
+
+		if len(landmark) > 1 {
+			mul = true
+		}
 
 		for _, L := range landmark {
 
 			LM := L.ToLandmark()
-			err := img.GenTeikyo(f, LM)
+			err := img.GenTeikyo(f, LM, mul)
 			if err != nil {
 				errch[file.Filename] = err.Error()
 			}

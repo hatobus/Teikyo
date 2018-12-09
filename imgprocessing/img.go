@@ -10,12 +10,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hatobus/Teikyo/models"
 	"github.com/nfnt/resize"
 )
 
-func GenTeikyo(fstream multipart.File, parts *models.Landmark) error {
+func GenTeikyo(fstream multipart.File, parts *models.Landmark, multi bool) error {
 
 	goPath := os.Getenv("GOPATH")
 	imgPath := filepath.Join(goPath, "src", "github.com", "hatobus", "Teikyo", "picture", "material")
@@ -47,14 +46,26 @@ func GenTeikyo(fstream multipart.File, parts *models.Landmark) error {
 		return err
 	}
 
+	if multi {
+		t, err := os.Open(outputfile)
+		if err != nil {
+			return err
+		}
+
+		dstimg, _, err = image.Decode(t)
+		if err != nil {
+			return err
+		}
+	}
+
+	// 大きさの微調整
 	RightEyeSizeWidth := parts.EyeRight.BottomX - parts.EyeRight.TopX + 15
 	RightEyeSizeHeight := parts.EyeRight.BottomY - parts.EyeRight.TopY + 15
 
 	LeftEyeSizeWidth := parts.EyeLeft.BottomX - parts.EyeLeft.TopX + 15
 	LeftEyeSizeHeight := parts.EyeLeft.BottomY - parts.EyeLeft.TopY + 15
 
-	spew.Dump(parts)
-
+	// 目の周りを覆うように大きさをリサイズ
 	LTei := resize.Resize(
 		uint(math.Abs(LeftEyeSizeWidth)),
 		uint(math.Abs(LeftEyeSizeHeight)),
@@ -70,13 +81,16 @@ func GenTeikyo(fstream multipart.File, parts *models.Landmark) error {
 	// References this
 	// http://dempatow.hatenablog.com
 
+	// 描画を開始する場所
 	TeistartPoint := image.Point{int(parts.EyeLeft.TopX) - 10, int(parts.EyeLeft.TopY)}
 	KyostartPoint := image.Point{int(parts.EyeRight.TopX) - 10, int(parts.EyeRight.TopY)}
 
+	// 画像を入れる部分を作る
 	TeiRectangle := image.Rectangle{TeistartPoint, TeistartPoint.Add(Tei.Bounds().Size())}
 	KyoRectangle := image.Rectangle{KyostartPoint, KyostartPoint.Add(Kyo.Bounds().Size())}
 	DstRectangle := image.Rectangle{image.Point{0, 0}, dstimg.Bounds().Size()}
 
+	// 実際に描画、draw.Overで透過したまま重ねることができる
 	rgba := image.NewRGBA(DstRectangle)
 	draw.Draw(rgba, DstRectangle, dstimg, image.Pt(0, 0), draw.Src)
 	draw.Draw(rgba, TeiRectangle, LTei, image.Pt(0, 0), draw.Over)
