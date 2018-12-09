@@ -123,16 +123,16 @@ type FaceParts struct {
 func (fp FaceParts) ToLandmark() *Landmark {
 	LM := &Landmark{}
 
-	LM.EyeRight.TopX = fp.FaceLandmarks.EyeRightTop.X
-	LM.EyeRight.TopY = fp.FaceLandmarks.EyeRightTop.Y
+	LM.EyeRight.TopX = fp.FaceLandmarks.EyebrowRightInner.X
+	LM.EyeRight.TopY = fp.FaceLandmarks.EyebrowRightInner.Y
 
-	LM.EyeRight.BottomX = fp.FaceLandmarks.EyeRightBottom.X
+	LM.EyeRight.BottomX = fp.FaceLandmarks.EyebrowRightOuter.X
 	LM.EyeRight.BottomY = fp.FaceLandmarks.EyeRightBottom.Y
 
-	LM.EyeLeft.TopX = fp.FaceLandmarks.EyeLeftTop.X
-	LM.EyeLeft.TopY = fp.FaceLandmarks.EyeLeftTop.Y
+	LM.EyeLeft.TopX = fp.FaceLandmarks.EyebrowLeftOuter.X
+	LM.EyeLeft.TopY = fp.FaceLandmarks.EyebrowLeftOuter.Y
 
-	LM.EyeLeft.BottomX = fp.FaceLandmarks.EyeLeftBottom.X
+	LM.EyeLeft.BottomX = fp.FaceLandmarks.EyebrowLeftInner.X
 	LM.EyeLeft.BottomY = fp.FaceLandmarks.EyeLeftBottom.Y
 
 	return LM
