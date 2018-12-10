@@ -14,7 +14,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
-func GenTeikyo(fstream multipart.File, parts *models.Landmark, multi bool, n int) error {
+func GenTeikyo(fstream multipart.File, parts *models.Landmark, multi bool, n int, cnt int) error {
 
 	goPath := os.Getenv("GOPATH")
 	imgPath := filepath.Join(goPath, "src", "github.com", "hatobus", "Teikyo", "picture", "material")
@@ -45,7 +45,7 @@ func GenTeikyo(fstream multipart.File, parts *models.Landmark, multi bool, n int
 		return err
 	}
 
-	if multi {
+	if cnt > 0 && multi {
 		t, err := os.Open(outputfile)
 		if err != nil {
 			return err

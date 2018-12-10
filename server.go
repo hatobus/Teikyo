@@ -44,7 +44,7 @@ func createTeikyohandler(c *gin.Context) {
 		log.Println(file.Filename)
 
 		f, err := file.Open()
-		// defer f.Close()
+		defer f.Close()
 
 		// 一回DecodeConfigでファイルをいじるとファイルが壊れるために
 		// 別のbufにコピーをして回避しておく
@@ -54,12 +54,10 @@ func createTeikyohandler(c *gin.Context) {
 		if err != nil {
 			errch[file.Filename] = err.Error()
 			b.Reset()
-			f.Close()
 			break
 		} else if format != "jpeg" {
 			errch[file.Filename] = "Filetype must be jpeg"
 			b.Reset()
-			f.Close()
 			break
 		}
 
@@ -68,7 +66,6 @@ func createTeikyohandler(c *gin.Context) {
 		landmark, err := callapi.DetectFace(f)
 		if err != nil {
 			errch[file.Filename] = err.Error()
-			f.Close()
 			break
 		}
 
@@ -82,15 +79,14 @@ func createTeikyohandler(c *gin.Context) {
 			mul = true
 		}
 
-		for _, L := range landmark {
+		for k, L := range landmark {
 			LM := L.ToLandmark()
-			err := img.GenTeikyo(f, LM, mul, i)
+			err := img.GenTeikyo(f, LM, mul, i, k)
 			if err != nil {
 				errch[file.Filename] = err.Error()
 			}
 		}
 
-		f.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
