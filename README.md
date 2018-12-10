@@ -19,6 +19,10 @@ https://azure.microsoft.com/ja-jp/services/cognitive-services/face/
     ```
         $ git clone https://github.com/hatobus/TeikyoGenerator.git
     ```
+    or 
+    ```
+        $ go get github.com/hatobus/Teikyo
+    ```
 2. To write `.env` file
     .env file is like this
     ```
