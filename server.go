@@ -38,7 +38,9 @@ func createTeikyohandler(c *gin.Context) {
 	errch := make(map[string]string, len(form.File))
 	b := new(bytes.Buffer)
 
-	for _, file := range files {
+	var mul bool
+
+	for i, file := range files {
 		log.Println(file.Filename)
 
 		f, err := file.Open()
@@ -71,25 +73,23 @@ func createTeikyohandler(c *gin.Context) {
 			errch[file.Filename] = "Human not found."
 		}
 
-		mul := false
+		mul = false
 
 		if len(landmark) > 1 {
 			mul = true
 		}
 
-		for _, L := range landmark {
-
+		for k, L := range landmark {
 			LM := L.ToLandmark()
-			err := img.GenTeikyo(f, LM, mul)
+			err := img.GenTeikyo(f, LM, mul, i, k)
 			if err != nil {
 				errch[file.Filename] = err.Error()
 			}
-
 		}
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "craeted",
-		"errors":  errch,
+		"errors": errch,
 	})
 }
