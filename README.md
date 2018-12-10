@@ -11,6 +11,10 @@ This repository generate this "提供目".
 ## Installation
 To install Teikyo generator, you need to install Go and Go workspaces.
 
+And to enable Face API in Azure.
+
+https://azure.microsoft.com/ja-jp/services/cognitive-services/face/
+
 1. `git clone` this repository
     ```
         $ git clone https://github.com/hatobus/TeikyoGenerator.git
@@ -26,16 +30,32 @@ To install Teikyo generator, you need to install Go and Go workspaces.
    ```
         go run server.go
    ```
+   Default port is `8080`. If it already used. To change other ports.
 4. Do POST Request
    
    - curl
         ```
             curl http://localhost:8080/detect \ 
-            -F "upload[]=@path/to/1.jpg" \
-            -F "upload[]=@path/to/2.jpg" \
+            -F "upload[]=@path/to/img1.jpg" \
+            -F "upload[]=@path/to/img2.jpg" \
             -H Content-Type: multipart/form-data"
         ```
    - httpie
+        ```
+           http -f POST http://localhost:8080/detect \
+           upload[]@/path/to/img1.jpg \
+           upload[]@/path/to/img3.jpg
+        ```
+    
+    Source image must be `jpeg` file. (Other format will be error)
+
+5. To generate pictures
+    
+    Output image generate to `picture/output` and name is `output[num].png`
+
+    example
+
+    ![lena](./picture/document/TeikyoLena.png)
 
 ## Used
 - Azure 
