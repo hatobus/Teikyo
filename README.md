@@ -15,14 +15,11 @@ And to enable Face API in Azure.
 
 https://azure.microsoft.com/ja-jp/services/cognitive-services/face/
 
-1. `git clone` this repository
-    ```
-        $ git clone https://github.com/hatobus/TeikyoGenerator.git
-    ```
-    or 
+1. `go get` this repository
     ```
         $ go get github.com/hatobus/Teikyo
     ```
+
 2. To write `.env` file
     .env file is like this
     ```
