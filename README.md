@@ -1,3 +1,5 @@
+[![SUSHI-WARE LICENSE](https://img.shields.io/badge/license-SUSHI--WARE%F0%9F%8D%A3-blue.svg)](https://github.com/MakeNowJust/sushi-ware)
+
 # TeikyoGenerator
 "提供目"(Teikyo-me) is japanese traditional funny picture for TV captured things.
 
@@ -64,3 +66,5 @@ https://azure.microsoft.com/ja-jp/services/cognitive-services/face/
 - Golang
     - godotenv
     - gin
+
+
