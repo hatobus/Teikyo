@@ -41,7 +41,7 @@ https://azure.microsoft.com/ja-jp/services/cognitive-services/face/
             curl http://localhost:8080/detect \ 
             -F "upload[]=@path/to/img1.jpg" \
             -F "upload[]=@path/to/img2.jpg" \
-            -H Content-Type: multipart/form-data"
+            -H "Content-Type: multipart/form-data"
         ```
    - httpie
         ```
