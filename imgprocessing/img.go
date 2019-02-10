@@ -16,9 +16,11 @@ import (
 
 func GenTeikyo(fstream multipart.File, parts *models.Landmark, multi bool, n int, cnt int) error {
 
+	exe, _ := os.Getwd()
+
 	goPath := os.Getenv("GOPATH")
 	imgPath := filepath.Join(goPath, "src", "github.com", "hatobus", "Teikyo", "picture", "material")
-	outputfile := filepath.Join(goPath, "src", "github.com", "hatobus", "Teikyo", "picture", "output", "output"+strconv.Itoa(n)+".png")
+	outputfile := filepath.Join(exe, "picture", "output", "output"+strconv.Itoa(n)+".png")
 
 	t, _ := os.Open(filepath.Join(imgPath, "teikyo-tei.png"))
 	defer t.Close()

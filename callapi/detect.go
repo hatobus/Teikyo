@@ -81,6 +81,7 @@ func DetectFace(fstream multipart.File) ([]models.FaceParts, error) {
 
 	var facelandmark []models.FaceParts
 	err = json.Unmarshal(body, &facelandmark)
+	log.Println(string(body))
 	if err != nil {
 		return nil, err
 	}
